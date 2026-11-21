@@ -166,9 +166,10 @@ namespace YieldPreview
                 return;
             }
 
-            var panelPosition = Event.current.mousePosition + new Vector2(22f, 40f);
             var panelSize = Text.CalcSize(panelText) + new Vector2(16f, 8f);
-            var panelRect = new Rect(panelPosition, panelSize);
+            var mouse = Event.current.mousePosition;
+            float panelX = Mathf.Max(0f, mouse.x - 22f - panelSize.x);
+            var panelRect = new Rect(new Vector2(panelX, mouse.y + 40f), panelSize);
             Widgets.DrawBoxSolid(panelRect, new Color(0f, 0f, 0f, 0.7f));
             Widgets.Label(panelRect.ContractedBy(6f, 4f), panelText);
         }
