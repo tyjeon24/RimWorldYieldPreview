@@ -1,0 +1,18 @@
+# Install once: uv tool install pre-commit && pre-commit install
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-xml # About/About.xml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: dotnet-format
+        name: dotnet format
+        entry: dotnet format Source/YieldPreview.csproj
+        language: system
+        types: [c#]
+        pass_filenames: false

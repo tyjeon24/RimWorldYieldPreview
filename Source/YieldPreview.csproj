@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- 1.7 (Waylith/.NET 10) can only be built against a local game install; its DLLs cannot be redistributed.
+       Override with: dotnet build -p:RimWorld17Dir=... -p:Harmony17Dir=... -->
+  <PropertyGroup>
+    <RimWorld17Dir Condition="'$(RimWorld17Dir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\RimWorld</RimWorld17Dir>
+    <Harmony17Dir Condition="'$(Harmony17Dir)' == ''">C:\Program Files (x86)\Steam\steamapps\workshop\content\294100\2009463077\1.7\Assemblies</Harmony17Dir>
+    <HasRimWorld17 Condition="Exists('$(RimWorld17Dir)\Waylith.dll')">true</HasRimWorld17>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworks>net472</TargetFrameworks>
+    <TargetFrameworks Condition="'$(HasRimWorld17)' == 'true'">net472;net10.0</TargetFrameworks>
+    <AssemblyName>YieldPreview</AssemblyName>
+    <RootNamespace>YieldPreview</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- Without the framework folder both targets would share one obj file and collide in parallel builds. -->
+    <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <DebugType>none</DebugType>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- 1.6: Unity/Mono, reference assemblies from NuGet (also works on CI runners) -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
+    <OutputPath>../1.6/Assemblies/</OutputPath>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" />
+    <PackageReference Include="Lib.Harmony" Version="2.4.3" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- 1.7: Waylith/.NET 10, references the local game install -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <OutputPath>../1.7/Assemblies/</OutputPath>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <Reference Include="$(RimWorld17Dir)\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="$(RimWorld17Dir)\UnityStubs.dll" Private="false" />
+    <Reference Include="$(Harmony17Dir)\0Harmony.dll" Private="false" />
+  </ItemGroup>
+
+</Project>

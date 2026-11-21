@@ -1,0 +1,4 @@
+# Keep LF everywhere (matches .editorconfig) so format checks agree on Windows and CI.
+* text=auto eol=lf
+*.dll binary
+*.png binary
